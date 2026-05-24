@@ -32,11 +32,35 @@ export default function AnimeForm({
     description: initialValues?.description ?? '',
   });
 
-  const updateField = (field: keyof AnimeFormData, value: string) => {
-    setFormData((previousData) => ({ ...previousData, [field]: value }));
+  const updateField = (
+    field: keyof AnimeFormData,
+    value: string
+  ) => {
+
+    // Solo números enteros para episodios
+    if (field === 'episodes') {
+      value = value.replace(/[^0-9]/g, '');
+    }
+
+    // Solo números y decimal para rating
+    if (field === 'rating') {
+      value = value.replace(/[^0-9.]/g, '');
+
+      // Evitar múltiples puntos decimales
+      const parts = value.split('.');
+      if (parts.length > 2) {
+        value = `${parts[0]}.${parts[1]}`;
+      }
+    }
+
+    setFormData((previousData) => ({
+      ...previousData,
+      [field]: value,
+    }));
   };
 
   const handleSubmit = () => {
+
     if (
       !formData.title.trim() ||
       !formData.genre.trim() ||
@@ -44,9 +68,35 @@ export default function AnimeForm({
       !formData.rating.trim() ||
       !formData.status.trim()
     ) {
-      alert('Por favor completa todos los campos obligatorios');
+      alert(
+        'Por favor completa todos los campos obligatorios'
+      );
       return;
     }
+
+    const episodes = Number(formData.episodes);
+    const rating = Number(formData.rating);
+
+    // Validación episodios
+    if (isNaN(episodes) || episodes <= 0) {
+      alert(
+        'Los episodios deben ser un número válido mayor a 0'
+      );
+      return;
+    }
+
+    // Validación rating
+    if (
+      isNaN(rating) ||
+      rating < 0 ||
+      rating > 10
+    ) {
+      alert(
+        'La calificación debe estar entre 0 y 10'
+      );
+      return;
+    }
+
     onSubmit(formData);
   };
 
