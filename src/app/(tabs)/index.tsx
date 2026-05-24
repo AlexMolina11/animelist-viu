@@ -1,4 +1,5 @@
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 
 import {
   Alert,
@@ -31,15 +32,18 @@ export default function AnimeListScreen() {
  
  
 
-  const { 
+  const {
+    animes,
+    loading,
+    removeAnime,
+    loadAnimes,
+  } = useAnimes();
 
-    animes, 
-
-    loading, 
-
-    removeAnime, 
-
-  } = useAnimes(); 
+  useFocusEffect(
+    useCallback(() => {
+      loadAnimes();
+    }, [])
+  );
 
  
  
