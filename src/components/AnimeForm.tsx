@@ -44,12 +44,28 @@ export default function AnimeForm({
 
     // Solo números y decimal para rating
     if (field === 'rating') {
+
+      // Solo números y punto decimal
       value = value.replace(/[^0-9.]/g, '');
 
-      // Evitar múltiples puntos decimales
+      // Solo un punto decimal
       const parts = value.split('.');
       if (parts.length > 2) {
         value = `${parts[0]}.${parts[1]}`;
+      }
+
+      // Convertir a número temporal
+      const numericValue = parseFloat(value);
+
+      // No permitir mayores a 10
+      if (!isNaN(numericValue) && numericValue > 10) {
+        value = '10';
+      }
+
+      // Evitar más de un decimal (ej: 8.55)
+      if (value.includes('.')) {
+        const [integer, decimal] = value.split('.');
+        value = `${integer}.${decimal?.slice(0, 1) ?? ''}`;
       }
     }
 
